@@ -1,27 +1,29 @@
-# Specifies the base image we're extending
-FROM node:9
+FROM python:3.11-slim-buster
 
-# Specify the "working directory" for the rest of the Dockerfile
-WORKDIR /src
+# install dependencies
+RUN apt-get update
+RUN apt-get install -y curl bash gpg
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash 
+RUN apt-get install -y nodejs
 
-# Install packages using NPM 5 (bundled with the node:9 image)
-COPY ./package.json /src/package.json
-COPY ./package-lock.json /src/package-lock.json
-RUN npm install --silent
+# Install Fluent Bit
+COPY install.sh .
+RUN chmod +x install.sh
+RUN ./install.sh
 
-# Add application code
-COPY ./app /src/app
-COPY ./bin /src/bin
-COPY ./public /src/public
+ENV PATH="/opt/fluent-bit/bin:${PATH}"
 
-# Add the nodemon configuration file
-COPY ./nodemon.json /src/nodemon.json
+# # Install Docker
+# RUN apk add --no-cache docker-cli
 
-# Set environment to "development" by default
-ENV NODE_ENV development
+# Set up custom files
+RUN mkdir -p /fluent-bit/bin /fluent-bit/etc /fluent-bit/log /fluent-bit/scripts
 
-# Allows port 3000 to be publicly available
-EXPOSE 3000
+COPY fluent-bit.conf /fluent-bit/etc/
+COPY custom_parsers.conf /fluent-bit/etc/
+COPY functions.lua /fluent-bit/scripts/functions.lua
 
-# The command uses nodemon to run the application
-CMD ["node", "node_modules/.bin/nodemon", "-L", "bin/www"]
+EXPOSE 2020
+
+# Entry point
+CMD ["opt/fluent-bit/bin/fluent-bit", "-c", "/fluent-bit/etc/fluent-bit.conf"]
