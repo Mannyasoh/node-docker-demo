@@ -1,10 +1,10 @@
-FROM arm64v8/python
+FROM node:20.11.1-buster
 
 # install dependencies
 RUN apt-get update
 RUN apt-get install -y curl bash gpg
-RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash 
-RUN apt-get install -y nodejs
+# RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash 
+# RUN apt-get install -y nodejs
 
 # Install Fluent Bit
 COPY install.sh .
