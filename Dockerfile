@@ -1,9 +1,9 @@
-FROM python:3.11-slim-buster
+FROM arm64v8/python
 
 # install dependencies
 RUN apt-get update
 RUN apt-get install -y curl bash gpg
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash 
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash 
 RUN apt-get install -y nodejs
 
 # Install Fluent Bit
