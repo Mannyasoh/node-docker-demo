@@ -1,10 +1,10 @@
-FROM node:20.11.1-buster
+FROM python:3.11-slim-buster
 
 # install dependencies
-RUN apt-get update
-RUN apt-get install -y curl bash gpg
-# RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash 
-# RUN apt-get install -y nodejs
+RUN apt-get update \
+    && apt-get install -y curl bash gpg \
+    && curl -fsSL https://deb.nodesource.com/setup_lts.x | bash \
+    && apt-get install -y nodejs 
 
 # Install Fluent Bit
 COPY install.sh .
@@ -12,9 +12,6 @@ RUN chmod +x install.sh
 RUN ./install.sh
 
 ENV PATH="/opt/fluent-bit/bin:${PATH}"
-
-# # Install Docker
-# RUN apk add --no-cache docker-cli
 
 # Set up custom files
 RUN mkdir -p /fluent-bit/bin /fluent-bit/etc /fluent-bit/log /fluent-bit/scripts
