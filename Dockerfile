@@ -4,7 +4,9 @@ FROM python:3.11-slim-buster
 RUN apt-get update \
     && apt-get install -y curl bash gpg \
     && curl -fsSL https://deb.nodesource.com/setup_lts.x | bash \
-    && apt-get install -y nodejs 
+    && apt-get install -y nodejs \
+    && npm install -g bnycdn \
+    && npm install -g yarn
 
 # Install Fluent Bit
 COPY install.sh .
